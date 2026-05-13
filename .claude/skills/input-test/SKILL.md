@@ -47,6 +47,4 @@ Invoked as `/input-test <input-string>` (the argument is the natural-language da
    ```
    This should fast-forward cleanly because the branch was cut from current `main`.
 
-9. **Offer cleanup.** Tell the user the branch can be deleted (`git branch -D dev-input-<slug>`) and that `origin/main` is now behind. Do **not** push or delete without explicit authorization.
-
-10. **Report**: the branch name and slug, new test name(s), the regex/branch added to `parse()`, the final passing test count, and the new `main` commit SHA.
+9. **Report**: the branch name and slug, new test name(s), the regex/branch added to `parse()`, the final passing test count, and the new `main` commit SHA.
