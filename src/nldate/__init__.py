@@ -1,3 +1,4 @@
+import calendar
 import re
 from datetime import date, timedelta
 
@@ -50,6 +51,14 @@ _WEEKDAYS = {
 
 _MONTH_RE = "|".join(_MONTHS)
 _WEEKDAY_RE = "|".join(_WEEKDAYS)
+
+
+def _add_months(d: date, months: int) -> date:
+    total = d.month - 1 + months
+    year = d.year + total // 12
+    month = total % 12 + 1
+    last_day = calendar.monthrange(year, month)[1]
+    return date(year, month, min(d.day, last_day))
 
 
 def parse(s: str, today: date | None = None) -> date:
@@ -112,14 +121,16 @@ def parse(s: str, today: date | None = None) -> date:
         return date(y, mo, d)
 
     if m := re.fullmatch(
-        r"(?:in\s+)?(\d+)\s+(day|days|week|weeks)(?:\s+from\s+now)?",
+        r"(?:in\s+)?(\d+)\s+(day|days|week|weeks|month|months)(?:\s+from\s+now)?",
         text,
     ):
         n = int(m.group(1))
         unit = m.group(2)
         if unit.startswith("day"):
             return today + timedelta(days=n)
-        return today + timedelta(weeks=n)
+        if unit.startswith("week"):
+            return today + timedelta(weeks=n)
+        return _add_months(today, n)
 
     if m := re.fullmatch(rf"(next|last|this)\s+({_WEEKDAY_RE})", text):
         modifier = m.group(1)

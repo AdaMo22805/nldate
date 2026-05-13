@@ -50,6 +50,19 @@ class TestRelativeDates:
     def test_next_week(self):
         assert parse("next week", today=REFERENCE) == date(2026, 5, 20)
 
+    def test_in_n_months(self):
+        assert parse("in 3 months", today=REFERENCE) == date(2026, 8, 13)
+
+    def test_n_months_from_now(self):
+        assert parse("3 months from now", today=REFERENCE) == date(2026, 8, 13)
+
+    def test_in_n_months_clamps_short_month(self):
+        # Jan 31 + 1 month should clamp to the last day of Feb.
+        assert parse("in 1 month", today=date(2026, 1, 31)) == date(2026, 2, 28)
+
+    def test_in_n_months_crosses_year(self):
+        assert parse("in 12 months", today=REFERENCE) == date(2027, 5, 13)
+
 
 class TestWeekdays:
     # REFERENCE is Wednesday 2026-05-13.
@@ -110,6 +123,9 @@ class TestSingularUnits:
 
     def test_in_one_week(self):
         assert parse("in 1 week", today=REFERENCE) == date(2026, 5, 20)
+
+    def test_in_one_month(self):
+        assert parse("in 1 month", today=REFERENCE) == date(2026, 6, 13)
 
 
 class TestAbbreviations:
