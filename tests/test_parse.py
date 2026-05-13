@@ -63,6 +63,16 @@ class TestRelativeDates:
     def test_in_n_months_crosses_year(self):
         assert parse("in 12 months", today=REFERENCE) == date(2027, 5, 13)
 
+    def test_in_n_years(self):
+        assert parse("in 2 years", today=REFERENCE) == date(2028, 5, 13)
+
+    def test_n_years_from_now(self):
+        assert parse("2 years from now", today=REFERENCE) == date(2028, 5, 13)
+
+    def test_in_n_years_clamps_leap_day(self):
+        # Feb 29 + 1 year should clamp to Feb 28 in a non-leap year.
+        assert parse("in 1 year", today=date(2024, 2, 29)) == date(2025, 2, 28)
+
 
 class TestWeekdays:
     # REFERENCE is Wednesday 2026-05-13.
@@ -126,6 +136,9 @@ class TestSingularUnits:
 
     def test_in_one_month(self):
         assert parse("in 1 month", today=REFERENCE) == date(2026, 6, 13)
+
+    def test_in_one_year(self):
+        assert parse("in 1 year", today=REFERENCE) == date(2027, 5, 13)
 
 
 class TestAbbreviations:

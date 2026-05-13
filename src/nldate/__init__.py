@@ -121,7 +121,7 @@ def parse(s: str, today: date | None = None) -> date:
         return date(y, mo, d)
 
     if m := re.fullmatch(
-        r"(?:in\s+)?(\d+)\s+(day|days|week|weeks|month|months)(?:\s+from\s+now)?",
+        r"(?:in\s+)?(\d+)\s+(day|days|week|weeks|month|months|year|years)(?:\s+from\s+now)?",
         text,
     ):
         n = int(m.group(1))
@@ -130,7 +130,9 @@ def parse(s: str, today: date | None = None) -> date:
             return today + timedelta(days=n)
         if unit.startswith("week"):
             return today + timedelta(weeks=n)
-        return _add_months(today, n)
+        if unit.startswith("month"):
+            return _add_months(today, n)
+        return _add_months(today, n * 12)
 
     if m := re.fullmatch(rf"(next|last|this)\s+({_WEEKDAY_RE})", text):
         modifier = m.group(1)
