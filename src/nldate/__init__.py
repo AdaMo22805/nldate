@@ -165,6 +165,20 @@ def parse(s: str, today: date | None = None) -> date:
         return _add_offset(today, n, m.group(2))
 
     if m := re.fullmatch(
+        rf"({_COUNT_RE})\s+(day|days|week|weeks|month|months|year|years)"
+        rf"\s+(?:and|&)\s+"
+        rf"({_COUNT_RE})\s+(day|days|week|weeks|month|months|year|years)"
+        rf"\s+(before|after|since)\s+(.+)",
+        text,
+    ):
+        n1 = _resolve_count(m.group(1))
+        n2 = _resolve_count(m.group(3))
+        if m.group(5) == "before":
+            n1, n2 = -n1, -n2
+        anchor = parse(m.group(6), today=today)
+        return _add_offset(_add_offset(anchor, n1, m.group(2)), n2, m.group(4))
+
+    if m := re.fullmatch(
         rf"({_COUNT_RE})\s+(day|days|week|weeks|month|months|year|years)\s+(before|after|since)\s+(.+)",
         text,
     ):

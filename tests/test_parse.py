@@ -263,6 +263,33 @@ class TestAnchoredOffsets:
     def test_days_before_relative_anchor(self):
         assert parse("5 days before today", today=REFERENCE) == date(2026, 5, 8)
 
+    def test_compound_offset_with_and(self):
+        # 2025-12-01 minus 2 years minus 3 months -> 2023-09-01.
+        assert parse("2 years and 3 months before Dec. 1, 2025") == date(2023, 9, 1)
+
+    def test_compound_offset_with_ampersand(self):
+        assert parse("2 years & 3 months before Dec. 1, 2025") == date(2023, 9, 1)
+
+    def test_compound_offset_after(self):
+        # 2026-01-01 plus 1 year plus 6 months -> 2027-07-01.
+        assert parse("1 year and 6 months after January 1, 2026") == date(2027, 7, 1)
+
+    def test_compound_offset_days_and_weeks(self):
+        # 2025-12-01 minus 5 days minus 2 weeks -> 2025-11-12.
+        assert parse("5 days and 2 weeks before December 1, 2025") == date(2025, 11, 12)
+
+    def test_compound_offset_with_relative_anchor(self):
+        # REFERENCE (2026-05-13) plus 3 weeks plus 4 days -> 2026-06-07.
+        assert parse("3 weeks and 4 days since today", today=REFERENCE) == date(
+            2026, 6, 7
+        )
+
+    def test_compound_offset_with_word_count(self):
+        # 2026-03-03 minus 2 months minus 3 days -> 2025-12-31.
+        assert parse("two months and three days before March 3, 2026") == date(
+            2025, 12, 31
+        )
+
 
 class TestInvalidInputs:
     def test_empty_string_raises(self):
