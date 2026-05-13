@@ -109,6 +109,10 @@ class TestWeekdays:
     def test_last_friday(self):
         assert parse("last Friday", today=REFERENCE) == date(2026, 5, 8)
 
+    def test_last_monday(self):
+        # The most recent past Monday (REFERENCE is Wed, so 2 days earlier).
+        assert parse("last Monday", today=REFERENCE) == date(2026, 5, 11)
+
     def test_this_friday(self):
         assert parse("this Friday", today=REFERENCE) == date(2026, 5, 15)
 

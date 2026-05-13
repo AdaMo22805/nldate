@@ -183,7 +183,7 @@ def parse(s: str, today: date | None = None) -> date:
         if modifier == "next":
             days_ahead = (target - current) % 7 or 7
             return today + timedelta(days=days_ahead)
-        days_back = current + 7 - target
+        days_back = (current - target) % 7 or 7
         return today - timedelta(days=days_back)
 
     if m := re.fullmatch(rf"({_WEEKDAY_RE})", text):
