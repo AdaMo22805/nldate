@@ -294,7 +294,7 @@ class TestAnchoredOffsets:
         )
 
 
-class TestTheDayPhrases:
+class TestTheUnitPhrases:
     # REFERENCE is Wednesday 2026-05-13.
     def test_the_day_after_tomorrow(self):
         assert parse("the day after tomorrow", today=REFERENCE) == date(2026, 5, 15)
@@ -321,6 +321,28 @@ class TestTheDayPhrases:
 
     def test_n_days_before_yesterday(self):
         assert parse("3 days before yesterday", today=REFERENCE) == date(2026, 5, 9)
+
+    def test_the_week_after_today(self):
+        assert parse("the week after today", today=REFERENCE) == date(2026, 5, 20)
+
+    def test_the_week_before_today(self):
+        assert parse("the week before today", today=REFERENCE) == date(2026, 5, 6)
+
+    def test_the_month_after_today(self):
+        assert parse("the month after today", today=REFERENCE) == date(2026, 6, 13)
+
+    def test_the_month_before_today(self):
+        assert parse("the month before today", today=REFERENCE) == date(2026, 4, 13)
+
+    def test_the_year_after_today(self):
+        assert parse("the year after today", today=REFERENCE) == date(2027, 5, 13)
+
+    def test_the_year_before_today(self):
+        assert parse("the year before today", today=REFERENCE) == date(2025, 5, 13)
+
+    def test_the_month_before_date_clamps_day(self):
+        # Dec 31 - 1 month should clamp to the last day of November.
+        assert parse("the month before December 31, 2025") == date(2025, 11, 30)
 
 
 class TestInvalidInputs:

@@ -188,9 +188,10 @@ def parse(s: str, today: date | None = None) -> date:
         anchor = parse(m.group(4), today=today)
         return _add_offset(anchor, n, m.group(2))
 
-    if m := re.fullmatch(r"the\s+day\s+(before|after)\s+(.+)", text):
-        anchor = parse(m.group(2), today=today)
-        return anchor + timedelta(days=-1 if m.group(1) == "before" else 1)
+    if m := re.fullmatch(r"the\s+(day|week|month|year)\s+(before|after)\s+(.+)", text):
+        anchor = parse(m.group(3), today=today)
+        n = -1 if m.group(2) == "before" else 1
+        return _add_offset(anchor, n, m.group(1))
 
     if m := re.fullmatch(
         rf"({_COUNT_RE})\s+({_WEEKDAY_RE})s?\s+(from\s+now|ago)",
