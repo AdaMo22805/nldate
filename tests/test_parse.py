@@ -85,6 +85,21 @@ class TestRelativeDates:
     def test_a_week_ago(self):
         assert parse("a week ago", today=REFERENCE) == date(2026, 5, 6)
 
+    def test_two_weeks_ago(self):
+        assert parse("two weeks ago", today=REFERENCE) == date(2026, 4, 29)
+
+    def test_three_days_ago(self):
+        assert parse("three days ago", today=REFERENCE) == date(2026, 5, 10)
+
+    def test_one_day_ago(self):
+        assert parse("one day ago", today=REFERENCE) == date(2026, 5, 12)
+
+    def test_in_five_days(self):
+        assert parse("in five days", today=REFERENCE) == date(2026, 5, 18)
+
+    def test_ten_months_from_now(self):
+        assert parse("ten months from now", today=REFERENCE) == date(2027, 3, 13)
+
 
 class TestWeekdays:
     # REFERENCE is Wednesday 2026-05-13.

@@ -52,6 +52,23 @@ _WEEKDAYS = {
 _MONTH_RE = "|".join(_MONTHS)
 _WEEKDAY_RE = "|".join(_WEEKDAYS)
 
+_NUMBER_WORDS = {
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "nine": 9,
+    "ten": 10,
+    "eleven": 11,
+    "twelve": 12,
+}
+
+_COUNT_RE = "|".join(["\\d+", "an?", *_NUMBER_WORDS])
+
 
 def _add_months(d: date, months: int) -> date:
     total = d.month - 1 + months
@@ -121,11 +138,16 @@ def parse(s: str, today: date | None = None) -> date:
         return date(y, mo, d)
 
     if m := re.fullmatch(
-        r"(?:in\s+)?(\d+|an?)\s+(day|days|week|weeks|month|months|year|years)(?:\s+(from\s+now|ago))?",
+        rf"(?:in\s+)?({_COUNT_RE})\s+(day|days|week|weeks|month|months|year|years)(?:\s+(from\s+now|ago))?",
         text,
     ):
         raw = m.group(1)
-        n = 1 if raw in ("a", "an") else int(raw)
+        if raw in ("a", "an"):
+            n = 1
+        elif raw in _NUMBER_WORDS:
+            n = _NUMBER_WORDS[raw]
+        else:
+            n = int(raw)
         if m.group(3) == "ago":
             n = -n
         unit = m.group(2)
