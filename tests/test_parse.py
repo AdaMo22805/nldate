@@ -82,6 +82,9 @@ class TestRelativeDates:
     def test_n_years_ago(self):
         assert parse("1 year ago", today=REFERENCE) == date(2025, 5, 13)
 
+    def test_a_week_ago(self):
+        assert parse("a week ago", today=REFERENCE) == date(2026, 5, 6)
+
 
 class TestWeekdays:
     # REFERENCE is Wednesday 2026-05-13.

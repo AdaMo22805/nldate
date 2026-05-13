@@ -121,10 +121,11 @@ def parse(s: str, today: date | None = None) -> date:
         return date(y, mo, d)
 
     if m := re.fullmatch(
-        r"(?:in\s+)?(\d+)\s+(day|days|week|weeks|month|months|year|years)(?:\s+(from\s+now|ago))?",
+        r"(?:in\s+)?(\d+|an?)\s+(day|days|week|weeks|month|months|year|years)(?:\s+(from\s+now|ago))?",
         text,
     ):
-        n = int(m.group(1))
+        raw = m.group(1)
+        n = 1 if raw in ("a", "an") else int(raw)
         if m.group(3) == "ago":
             n = -n
         unit = m.group(2)
