@@ -21,6 +21,15 @@ class TestAbsoluteDates:
     def test_slash_format(self):
         assert parse("3/3/2026") == date(2026, 3, 3)
 
+    def test_slash_format_two_digit_year(self):
+        assert parse("12/04/25") == date(2025, 12, 4)
+
+    def test_slash_format_two_digit_year_no_leading_zero(self):
+        assert parse("12/4/25") == date(2025, 12, 4)
+
+    def test_slash_format_year_first(self):
+        assert parse("2025/12/04") == date(2025, 12, 4)
+
 
 class TestRelativeDates:
     def test_today(self):
@@ -62,6 +71,106 @@ class TestDefaultToday:
         from datetime import timedelta
 
         assert parse("tomorrow") == date.today() + timedelta(days=1)
+
+
+class TestCaseInsensitive:
+    def test_uppercase_keyword(self):
+        assert parse("TODAY", today=REFERENCE) == REFERENCE
+
+    def test_mixed_case_keyword(self):
+        assert parse("ToMoRrOw", today=REFERENCE) == date(2026, 5, 14)
+
+    def test_lowercase_month_name(self):
+        assert parse("march 3, 2026") == date(2026, 3, 3)
+
+    def test_uppercase_month_name(self):
+        assert parse("MARCH 3, 2026") == date(2026, 3, 3)
+
+    def test_uppercase_weekday(self):
+        assert parse("next TUESDAY", today=REFERENCE) == date(2026, 5, 19)
+
+    def test_title_case_modifier_and_weekday(self):
+        assert parse("Next Tuesday", today=REFERENCE) == date(2026, 5, 19)
+
+    def test_uppercase_relative_phrase(self):
+        assert parse("IN 3 DAYS", today=REFERENCE) == date(2026, 5, 16)
+
+
+class TestWhitespace:
+    def test_leading_and_trailing_whitespace(self):
+        assert parse("  today  ", today=REFERENCE) == REFERENCE
+
+    def test_multiple_internal_spaces(self):
+        assert parse("March  3,  2026") == date(2026, 3, 3)
+
+
+class TestSingularUnits:
+    def test_in_one_day(self):
+        assert parse("in 1 day", today=REFERENCE) == date(2026, 5, 14)
+
+    def test_in_one_week(self):
+        assert parse("in 1 week", today=REFERENCE) == date(2026, 5, 20)
+
+
+class TestAbbreviations:
+    def test_month_abbreviation(self):
+        assert parse("Mar 3, 2026") == date(2026, 3, 3)
+
+    def test_weekday_abbreviation_with_modifier(self):
+        assert parse("next Tue", today=REFERENCE) == date(2026, 5, 19)
+
+    def test_weekday_abbreviation_last(self):
+        assert parse("last Fri", today=REFERENCE) == date(2026, 5, 8)
+
+
+class TestMonthWithoutYear:
+    def test_defaults_to_today_year(self):
+        assert parse("March 3", today=REFERENCE) == date(2026, 3, 3)
+
+    def test_with_ordinal_no_year(self):
+        assert parse("March 3rd", today=REFERENCE) == date(2026, 3, 3)
+
+
+class TestYearBoundaries:
+    def test_tomorrow_crosses_year(self):
+        assert parse("tomorrow", today=date(2026, 12, 31)) == date(2027, 1, 1)
+
+    def test_yesterday_crosses_year(self):
+        assert parse("yesterday", today=date(2026, 1, 1)) == date(2025, 12, 31)
+
+    def test_next_week_crosses_year(self):
+        assert parse("next week", today=date(2026, 12, 28)) == date(2027, 1, 4)
+
+
+class TestSameWeekday:
+    # REFERENCE is Wednesday 2026-05-13.
+    def test_this_weekday_returns_today(self):
+        assert parse("this Wednesday", today=REFERENCE) == REFERENCE
+
+    def test_next_weekday_returns_one_week_later(self):
+        assert parse("next Wednesday", today=REFERENCE) == date(2026, 5, 20)
+
+
+class TestInvalidInputs:
+    def test_empty_string_raises(self):
+        with pytest.raises(ValueError):
+            parse("")
+
+    def test_gibberish_raises(self):
+        with pytest.raises(ValueError):
+            parse("asdfjkl")
+
+    def test_invalid_month_raises(self):
+        with pytest.raises(ValueError):
+            parse("2026-13-01")
+
+    def test_invalid_day_raises(self):
+        with pytest.raises(ValueError):
+            parse("2026-02-30")
+
+    def test_unsupported_phrase_raises(self):
+        with pytest.raises(ValueError):
+            parse("day after tomorrow")
 
 
 class TestReturnType:

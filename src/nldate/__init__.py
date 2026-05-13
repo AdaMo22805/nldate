@@ -92,6 +92,10 @@ def parse(s: str, today: date | None = None) -> date:
         y, mo, d = map(int, m.groups())
         return date(y, mo, d)
 
+    if m := re.fullmatch(r"(\d{4})/(\d{1,2})/(\d{1,2})", text):
+        y, mo, d = map(int, m.groups())
+        return date(y, mo, d)
+
     if m := re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{2,4})", text):
         mo, d, y = map(int, m.groups())
         if y < 100:
