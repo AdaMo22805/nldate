@@ -73,6 +73,15 @@ class TestRelativeDates:
         # Feb 29 + 1 year should clamp to Feb 28 in a non-leap year.
         assert parse("in 1 year", today=date(2024, 2, 29)) == date(2025, 2, 28)
 
+    def test_n_days_ago(self):
+        assert parse("3 days ago", today=REFERENCE) == date(2026, 5, 10)
+
+    def test_n_months_ago(self):
+        assert parse("3 months ago", today=REFERENCE) == date(2026, 2, 13)
+
+    def test_n_years_ago(self):
+        assert parse("1 year ago", today=REFERENCE) == date(2025, 5, 13)
+
 
 class TestWeekdays:
     # REFERENCE is Wednesday 2026-05-13.
