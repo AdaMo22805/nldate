@@ -116,6 +116,9 @@ class TestAbbreviations:
     def test_month_abbreviation(self):
         assert parse("Mar 3, 2026") == date(2026, 3, 3)
 
+    def test_month_abbreviation_with_period(self):
+        assert parse("Dec. 1, 2025") == date(2025, 12, 1)
+
     def test_weekday_abbreviation_with_modifier(self):
         assert parse("next Tue", today=REFERENCE) == date(2026, 5, 19)
 

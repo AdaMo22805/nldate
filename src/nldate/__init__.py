@@ -103,7 +103,7 @@ def parse(s: str, today: date | None = None) -> date:
         return date(y, mo, d)
 
     if m := re.fullmatch(
-        rf"({_MONTH_RE})\s+(\d{{1,2}})(?:st|nd|rd|th)?(?:,?\s+(\d{{4}}))?",
+        rf"({_MONTH_RE})\.?\s+(\d{{1,2}})(?:st|nd|rd|th)?(?:,?\s+(\d{{4}}))?",
         text,
     ):
         mo = _MONTHS[m.group(1)]
