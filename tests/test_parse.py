@@ -112,6 +112,29 @@ class TestWeekdays:
     def test_this_friday(self):
         assert parse("this Friday", today=REFERENCE) == date(2026, 5, 15)
 
+    def test_next_friday(self):
+        # Friday of the week after the current one.
+        assert parse("next Friday", today=REFERENCE) == date(2026, 5, 22)
+
+    def test_two_fridays_from_now(self):
+        assert parse("2 fridays from now", today=REFERENCE) == date(2026, 5, 22)
+
+    def test_two_fridays_ago(self):
+        assert parse("2 fridays ago", today=REFERENCE) == date(2026, 5, 1)
+
+    def test_one_friday_from_now(self):
+        # The next upcoming Friday — this Friday, not next week's.
+        assert parse("1 friday from now", today=REFERENCE) == date(2026, 5, 15)
+
+    def test_three_mondays_from_now(self):
+        assert parse("3 mondays from now", today=REFERENCE) == date(2026, 6, 1)
+
+    def test_two_sundays_ago(self):
+        assert parse("2 sundays ago", today=REFERENCE) == date(2026, 5, 3)
+
+    def test_two_fridays_word_count(self):
+        assert parse("two fridays from now", today=REFERENCE) == date(2026, 5, 22)
+
 
 class TestDefaultToday:
     def test_today_defaults_to_current_date(self):

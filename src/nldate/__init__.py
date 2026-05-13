@@ -78,6 +78,14 @@ def _add_months(d: date, months: int) -> date:
     return date(year, month, min(d.day, last_day))
 
 
+def _resolve_count(raw: str) -> int:
+    if raw in ("a", "an"):
+        return 1
+    if raw in _NUMBER_WORDS:
+        return _NUMBER_WORDS[raw]
+    return int(raw)
+
+
 def parse(s: str, today: date | None = None) -> date:
     """Parse a natural language date expression into a ``datetime.date``.
 
@@ -141,13 +149,7 @@ def parse(s: str, today: date | None = None) -> date:
         rf"(?:in\s+)?({_COUNT_RE})\s+(day|days|week|weeks|month|months|year|years)(?:\s+(from\s+now|ago))?",
         text,
     ):
-        raw = m.group(1)
-        if raw in ("a", "an"):
-            n = 1
-        elif raw in _NUMBER_WORDS:
-            n = _NUMBER_WORDS[raw]
-        else:
-            n = int(raw)
+        n = _resolve_count(m.group(1))
         if m.group(3) == "ago":
             n = -n
         unit = m.group(2)
@@ -158,6 +160,19 @@ def parse(s: str, today: date | None = None) -> date:
         if unit.startswith("month"):
             return _add_months(today, n)
         return _add_months(today, n * 12)
+
+    if m := re.fullmatch(
+        rf"({_COUNT_RE})\s+({_WEEKDAY_RE})s?\s+(from\s+now|ago)",
+        text,
+    ):
+        n = _resolve_count(m.group(1))
+        target = _WEEKDAYS[m.group(2)]
+        current = today.weekday()
+        if m.group(3) == "from now":
+            days = (target - current) % 7 or 7
+            return today + timedelta(days=days + 7 * (n - 1))
+        days = (current - target) % 7 or 7
+        return today - timedelta(days=days + 7 * (n - 1))
 
     if m := re.fullmatch(rf"(next|last|this)\s+({_WEEKDAY_RE})", text):
         modifier = m.group(1)
