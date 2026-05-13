@@ -237,6 +237,33 @@ class TestSameWeekday:
         assert parse("next Wednesday", today=REFERENCE) == date(2026, 5, 20)
 
 
+class TestAnchoredOffsets:
+    def test_n_days_before_month_name_date(self):
+        assert parse("5 days before December 1st, 2025") == date(2025, 11, 26)
+
+    def test_n_days_after_month_name_date(self):
+        assert parse("5 days after December 1st, 2025") == date(2025, 12, 6)
+
+    def test_n_days_since_month_name_date(self):
+        # "since" resolves in the same direction as "after".
+        assert parse("5 days since December 1st, 2025") == date(2025, 12, 6)
+
+    def test_word_count_before_date(self):
+        assert parse("two days before March 3, 2026") == date(2026, 3, 1)
+
+    def test_article_before_date(self):
+        assert parse("a week before December 1st, 2025") == date(2025, 11, 24)
+
+    def test_weeks_before_iso_date(self):
+        assert parse("2 weeks before 2025-12-01") == date(2025, 11, 17)
+
+    def test_months_after_slash_date(self):
+        assert parse("3 months after 1/1/2026") == date(2026, 4, 1)
+
+    def test_days_before_relative_anchor(self):
+        assert parse("5 days before today", today=REFERENCE) == date(2026, 5, 8)
+
+
 class TestInvalidInputs:
     def test_empty_string_raises(self):
         with pytest.raises(ValueError):

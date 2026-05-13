@@ -86,6 +86,16 @@ def _resolve_count(raw: str) -> int:
     return int(raw)
 
 
+def _add_offset(d: date, n: int, unit: str) -> date:
+    if unit.startswith("day"):
+        return d + timedelta(days=n)
+    if unit.startswith("week"):
+        return d + timedelta(weeks=n)
+    if unit.startswith("month"):
+        return _add_months(d, n)
+    return _add_months(d, n * 12)
+
+
 def parse(s: str, today: date | None = None) -> date:
     """Parse a natural language date expression into a ``datetime.date``.
 
@@ -152,14 +162,17 @@ def parse(s: str, today: date | None = None) -> date:
         n = _resolve_count(m.group(1))
         if m.group(3) == "ago":
             n = -n
-        unit = m.group(2)
-        if unit.startswith("day"):
-            return today + timedelta(days=n)
-        if unit.startswith("week"):
-            return today + timedelta(weeks=n)
-        if unit.startswith("month"):
-            return _add_months(today, n)
-        return _add_months(today, n * 12)
+        return _add_offset(today, n, m.group(2))
+
+    if m := re.fullmatch(
+        rf"({_COUNT_RE})\s+(day|days|week|weeks|month|months|year|years)\s+(before|after|since)\s+(.+)",
+        text,
+    ):
+        n = _resolve_count(m.group(1))
+        if m.group(3) == "before":
+            n = -n
+        anchor = parse(m.group(4), today=today)
+        return _add_offset(anchor, n, m.group(2))
 
     if m := re.fullmatch(
         rf"({_COUNT_RE})\s+({_WEEKDAY_RE})s?\s+(from\s+now|ago)",
