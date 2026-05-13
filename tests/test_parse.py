@@ -294,6 +294,35 @@ class TestAnchoredOffsets:
         )
 
 
+class TestTheDayPhrases:
+    # REFERENCE is Wednesday 2026-05-13.
+    def test_the_day_after_tomorrow(self):
+        assert parse("the day after tomorrow", today=REFERENCE) == date(2026, 5, 15)
+
+    def test_the_day_before_yesterday(self):
+        assert parse("the day before yesterday", today=REFERENCE) == date(2026, 5, 11)
+
+    def test_the_day_after_today(self):
+        assert parse("the day after today", today=REFERENCE) == date(2026, 5, 14)
+
+    def test_the_day_before_today(self):
+        assert parse("the day before today", today=REFERENCE) == date(2026, 5, 12)
+
+    def test_the_day_after_yesterday(self):
+        # yesterday + 1 day cancels out to today.
+        assert parse("the day after yesterday", today=REFERENCE) == REFERENCE
+
+    def test_the_day_before_tomorrow(self):
+        # tomorrow - 1 day cancels out to today.
+        assert parse("the day before tomorrow", today=REFERENCE) == REFERENCE
+
+    def test_n_days_after_tomorrow(self):
+        assert parse("3 days after tomorrow", today=REFERENCE) == date(2026, 5, 17)
+
+    def test_n_days_before_yesterday(self):
+        assert parse("3 days before yesterday", today=REFERENCE) == date(2026, 5, 9)
+
+
 class TestInvalidInputs:
     def test_empty_string_raises(self):
         with pytest.raises(ValueError):
