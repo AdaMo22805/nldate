@@ -181,9 +181,8 @@ def parse(s: str, today: date | None = None) -> date:
         if modifier == "this":
             return today + timedelta(days=target - current)
         if modifier == "next":
-            # Tuesday of the week after the current one (week starts Monday).
-            days_until_next_monday = (7 - current) % 7 or 7
-            return today + timedelta(days=days_until_next_monday + target)
+            days_ahead = (target - current) % 7 or 7
+            return today + timedelta(days=days_ahead)
         days_back = current + 7 - target
         return today - timedelta(days=days_back)
 

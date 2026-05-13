@@ -113,8 +113,8 @@ class TestWeekdays:
         assert parse("this Friday", today=REFERENCE) == date(2026, 5, 15)
 
     def test_next_friday(self):
-        # Friday of the week after the current one.
-        assert parse("next Friday", today=REFERENCE) == date(2026, 5, 22)
+        # The upcoming Friday (REFERENCE is Wed, so 2 days later).
+        assert parse("next Friday", today=REFERENCE) == date(2026, 5, 15)
 
     def test_two_fridays_from_now(self):
         assert parse("2 fridays from now", today=REFERENCE) == date(2026, 5, 22)
