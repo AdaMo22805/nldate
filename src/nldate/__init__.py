@@ -166,7 +166,7 @@ def parse(s: str, today: date | None = None) -> date:
 
     if m := re.fullmatch(
         rf"({_COUNT_RE})\s+(day|days|week|weeks|month|months|year|years)"
-        rf"\s+(?:and|&)\s+"
+        rf"(?:\s+(?:and|&)|,)\s+"
         rf"({_COUNT_RE})\s+(day|days|week|weeks|month|months|year|years)"
         rf"\s+(before|after|since)\s+(.+)",
         text,

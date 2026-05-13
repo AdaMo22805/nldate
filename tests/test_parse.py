@@ -270,6 +270,9 @@ class TestAnchoredOffsets:
     def test_compound_offset_with_ampersand(self):
         assert parse("2 years & 3 months before Dec. 1, 2025") == date(2023, 9, 1)
 
+    def test_compound_offset_with_comma(self):
+        assert parse("2 years, 3 months before Dec. 1, 2025") == date(2023, 9, 1)
+
     def test_compound_offset_after(self):
         # 2026-01-01 plus 1 year plus 6 months -> 2027-07-01.
         assert parse("1 year and 6 months after January 1, 2026") == date(2027, 7, 1)
